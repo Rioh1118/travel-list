@@ -1,5 +1,6 @@
 import React from "react";
-import { useState } from "react";
+import { Stats } from "./Stats.jsx";
+import { PackagingList } from "./PackagingList.jsx";
 
 function App() {
   const [items, setItems] = React.useState([]);
@@ -11,6 +12,13 @@ function App() {
       ),
     );
   };
+  function handleClearList() {
+    const confirmed = window.confirm(
+      "Are you sure you want to delete all items?",
+    );
+
+    if (confirmed) setItems([]);
+  }
 
   const handleAddItem = (item) => {
     setItems((items) => [...items, item]);
@@ -28,6 +36,7 @@ function App() {
         items={items}
         onDeleteItem={deleteItem}
         onCheckItem={checkItem}
+        onClearList={handleClearList}
       />
       <Stats items={items} />
     </div>
@@ -73,58 +82,6 @@ function Form({ onAddItems }) {
       ></input>
       <button>Add</button>
     </form>
-  );
-}
-
-function PackagingList({ items, onDeleteItem, onCheckItem }) {
-  return (
-    <div className={"list"}>
-      <ul>
-        {items.map((item) => (
-          <Item
-            item={item}
-            key={item.id}
-            onDeleteItem={onDeleteItem}
-            onCheckItem={onCheckItem}
-          />
-        ))}
-      </ul>
-    </div>
-  );
-}
-
-// eslint-disable-next-line react/prop-types
-function Item({ item, onDeleteItem, onCheckItem }) {
-  return (
-    <li>
-      <input
-        type={"checkbox"}
-        value={item.packed}
-        onChange={() => onCheckItem(item.id)}
-      />
-      <span style={item.packed ? { textDecoration: "line-through" } : {}}>
-        {/* eslint-disable-next-line react/prop-types */}
-        {item.quantity} {item.description}
-      </span>
-      <button onClick={() => onDeleteItem(item.id)}>❌</button>
-    </li>
-  );
-}
-
-function Stats({ items }) {
-  const numItems = items.length;
-  const numPacked = items.filter((item) => item.packed).length;
-  const percentage =
-    numItems !== 0 ? Math.round((numPacked / numItems) * 100) : 0;
-
-  return (
-    <footer className={"stats"}>
-      <em>
-        {percentage === 100
-          ? `You got everything! Ready to go ✈️✈️✈️`
-          : ` 🧳 You have ${numItems} items on your list, and you already packed ${numPacked} (${percentage}%)`}
-      </em>
-    </footer>
   );
 }
 
